@@ -35,18 +35,26 @@ class MyHomePageState extends State<MyHomePage> {
   MyHomePageState() {
     _deviceCalendarPlugin = DeviceCalendarPlugin();
   }
+  int _userCalendar = 2; // id is 3
+  String _userCalendarId = '3';
 
   @override
   initState() {
     super.initState();
     _retrieveCalendars();
+    _retrieveCalendarEvents(_userCalendarId);
+//    String _title = _calendars[_userCalendar].name;
+
+//    print('Nr of Calendars: ${_calendars?.length}');
+//    print('Calendar ${_calendars[1]}');
+//    print('Selected calendar Id ${_calendars[_userCalendar].id}');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Property Returns Events'),
+        title: Text('Events:'),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.calendar_today),
@@ -57,41 +65,39 @@ class MyHomePageState extends State<MyHomePage> {
       ),
       body: Column(
         children: <Widget>[
-          ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: 150.0),
-            child: ListView.builder(
-              itemCount: _calendars?.length ?? 0,
-              itemBuilder: (BuildContext context, int index) {
-                return GestureDetector(
-                  onTap: () async {
-                    await _retrieveCalendarEvents(_calendars[3].id);
+//          ConstrainedBox(
+//            constraints: BoxConstraints(maxHeight: 150.0),
+//            child: ListView.builder(
+//              itemCount: _calendars?.length ?? 0,
+//              itemBuilder: (BuildContext context, int index) {
+//                return GestureDetector(
+//                  onTap: () async {
 //                    await _retrieveCalendarEvents(_calendars[index].id);
-                    setState(() {
-                      _selectedCalendar = _calendars[3];
+//                    setState(() {
 //                      _selectedCalendar = _calendars[index];
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Row(
-                      children: <Widget>[
-                        Expanded(
-                          flex: 1,
-                          child: Text(
-                            _calendars[index].name,
-                            style: TextStyle(fontSize: 25.0),
-                          ),
-                        ),
-                        Icon(_calendars[index].isReadOnly
-                            ? Icons.lock
-                            : Icons.lock_open)
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
+//                    });
+//                  },
+//                  child: Padding(
+//                    padding: const EdgeInsets.all(10.0),
+//                    child: Row(
+//                      children: <Widget>[
+//                        Expanded(
+//                          flex: 1,
+//                          child: Text(
+//                            _calendars[index].name,
+//                            style: TextStyle(fontSize: 25.0),
+//                          ),
+//                        ),
+//                        Icon(_calendars[index].isReadOnly
+//                            ? Icons.lock
+//                            : Icons.lock_open)
+//                      ],
+//                    ),
+//                  ),
+//                );
+//              },
+//            ),
+//          ),
           Expanded(
             flex: 1,
             child: Container(
@@ -101,7 +107,7 @@ class MyHomePageState extends State<MyHomePage> {
                 itemBuilder: (BuildContext context, int index) {
                   return EventItem(
                       _calendarEvents[index], _deviceCalendarPlugin, () async {
-                    await _retrieveCalendarEvents(_selectedCalendar.id);
+                    await _retrieveCalendarEvents(_userCalendarId);
                   });
                 },
               ),
@@ -109,7 +115,8 @@ class MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      floatingActionButton: !(_selectedCalendar?.isReadOnly ?? true)
+//      floatingActionButton: !(_selectedCalendar?.isReadOnly ?? true)
+      floatingActionButton: !(false)
           ? FloatingActionButton(
               onPressed: () async {
                 final now = DateTime.now();
@@ -144,6 +151,8 @@ class MyHomePageState extends State<MyHomePage> {
       final calendarsResult = await _deviceCalendarPlugin.retrieveCalendars();
       setState(() {
         _calendars = calendarsResult?.data;
+//        print('After _receiveCalandars ${_calendars[8].name}');
+//        print('Nr of Calendars: ${_calendars.length}');
       });
     } on PlatformException catch (e) {
       print(e);
@@ -152,8 +161,9 @@ class MyHomePageState extends State<MyHomePage> {
 
   Future _retrieveCalendarEvents(String calendarId) async {
     try {
-      final startDate = DateTime.now().add(Duration(days: -30));
-      final endDate = DateTime.now().add(Duration(days: 10000)); //27 years
+      final startDate = DateTime.now().add(Duration(days: -365));
+//      final startDate = DateTime.now().add(Duration(days: -30));
+      final endDate = DateTime.now().add(Duration(days: 3650)); // 10 years
       final retrieveEventsParams =
           RetrieveEventsParams(startDate: startDate, endDate: endDate);
       final eventsResult = await _deviceCalendarPlugin.retrieveEvents(
@@ -162,8 +172,7 @@ class MyHomePageState extends State<MyHomePage> {
       setState(() {
         _calendarEvents = eventsResult?.data;
         print(
-            'Event $_calendarEvents'); // each _calendarEvent is an calendar entry
-        print('Calandar Id: $calendarId');
+            'Calandar Id: $calendarId, Event ${_calendarEvents[0]?.eventId}'); // each _calendarEvent is an calendar entry
       });
     } catch (e) {
       print(e);
@@ -180,6 +189,8 @@ class EventItem extends StatelessWidget {
   EventItem(
       this._calendarEvent, this._deviceCalendarPlugin, this.onDeleteSucceeded);
 
+  // format date
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -187,8 +198,28 @@ class EventItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           ListTile(
-              title: Text(_calendarEvent.title ?? ''),
-              subtitle: Text(_calendarEvent.description ?? '')),
+            leading: Text(
+              '${_calendarEvent.start.day.toString()}/${_calendarEvent.start.month.toString()}/${_calendarEvent.start.year.toString()}',
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.blueAccent,
+              ),
+            ),
+            title: Text(
+              _calendarEvent.title ?? '',
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.blue,
+              ),
+            ),
+            subtitle: Text(_calendarEvent.description ?? ''),
+            trailing: CircleAvatar(
+              radius: 30,
+              child: Text(_calendarEvent.allDay != null && _calendarEvent.allDay
+                  ? 'All Day'
+                  : '${_calendarEvent.start.hour.toString()}:${_calendarEvent.start.minute.toString()}'),
+            ),
+          ),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
@@ -197,99 +228,41 @@ class EventItem extends StatelessWidget {
                   alignment: Alignment.topLeft,
                   child: Row(
                     children: <Widget>[
-                      Container(
-                        width: _eventFieldNameWidth,
-                        child: Text('All day?'),
+                      Expanded(
+                        child: Text(
+                          _calendarEvent.location,
+                        ),
                       ),
-                      Text(
-                          _calendarEvent.allDay != null && _calendarEvent.allDay
-                              ? 'Yes'
-                              : 'No'),
                     ],
                   ),
                 ),
-//                SizedBox(
-//                  height: 10.0,
-//                ),
-//                Align(
-//                  alignment: Alignment.topLeft,
-//                  child: Row(
-//                    children: <Widget>[
-//                      Container(child: Text('Start: ${_calendarEvent.start}')),
-//                    ],
-//                  ),
-//                ),
-//                SizedBox(
-//                  height: 10,
-//                ),
-//                Align(
-//                  alignment: Alignment.topLeft,
-//                  child: Row(
-//                    children: <Widget>[
-//                      Container(child: Text('End: ${_calendarEvent.end}'))
-//                    ],
-//                  ),
-//                ),
-//                SizedBox(
-//                  height: 10,
-//                ),
-//                Align(
-//                  alignment: Alignment.topLeft,
-//                  child: Row(
-//                    children: <Widget>[
-//                      Container(
-//                        width: _eventFieldNameWidth,
-//                        child: Text('Location'),
-//                      ),
-//                      Expanded(
-//                        child: Text(
-//                          _calendarEvent?.location ?? '',
-//                          overflow: TextOverflow.ellipsis,
-//                        ),
-//                      ),
-//                    ],
-//                  ),
-//                ),
-//                SizedBox(
-//                  height: 10.0,
-//                ),
-//                Align(
-//                  alignment: Alignment.topLeft,
-//                  child: Row(
-//                    children: <Widget>[
-//                      Container(
-//                        width: _eventFieldNameWidth,
-//                        child: Text('Attendees'),
-//                      ),
-//                      Expanded(
-//                        child: Text(
-//                          _calendarEvent?.attendees
-//                                  ?.where((a) => a.name?.isNotEmpty ?? false)
-//                                  ?.map((a) => a.name)
-//                                  ?.join(', ') ??
-//                              '',
-//                          overflow: TextOverflow.ellipsis,
-//                        ),
-//                      ),
-//                    ],
-//                  ),
-//                ),
-              ],
-            ),
-          ),
-          ButtonTheme.bar(
-            child: ButtonBar(
-              children: <Widget>[
-                IconButton(
-                  onPressed: () async {
-                    final deleteResult =
-                        await _deviceCalendarPlugin.deleteEvent(
-                            _calendarEvent.calendarId, _calendarEvent.eventId);
-                    if (deleteResult.isSuccess && deleteResult.data) {
-                      onDeleteSucceeded();
-                    }
-                  },
-                  icon: Icon(Icons.delete),
+                Row(
+                  children: <Widget>[
+                    IconButton(
+                      onPressed: () async {
+                        final deleteResult =
+                            await _deviceCalendarPlugin.deleteEvent(
+                                _calendarEvent.calendarId,
+                                _calendarEvent.eventId);
+                        if (deleteResult.isSuccess && deleteResult.data) {
+                          onDeleteSucceeded();
+                        }
+                      },
+                      icon: Icon(Icons.edit),
+                    ),
+                    IconButton(
+                      onPressed: () async {
+                        final deleteResult =
+                            await _deviceCalendarPlugin.deleteEvent(
+                                _calendarEvent.calendarId,
+                                _calendarEvent.eventId);
+                        if (deleteResult.isSuccess && deleteResult.data) {
+                          onDeleteSucceeded();
+                        }
+                      },
+                      icon: Icon(Icons.delete),
+                    ),
+                  ],
                 ),
               ],
             ),
