@@ -5,7 +5,7 @@ class ToDo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('To do list. Things withoutnn times'),
+        title: Text('To do list. Things without times'),
       ),
       body: Center(
         child: RaisedButton(
