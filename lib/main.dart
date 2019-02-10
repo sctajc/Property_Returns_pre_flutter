@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'UI/events.dart';
 import 'UI/to_do.dart';
+import 'UI/properties.dart';
+import 'package:flutter/rendering.dart';
+import 'util/auth.dart';
 
-void main() => runApp(MyApp());
+void main() {
+//  debugPaintSizeEnabled = true;
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   final appTitle = 'Property Returns';
@@ -24,11 +30,12 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final drawerHeader = UserAccountsDrawerHeader(
+      margin: EdgeInsets.only(bottom: 0, top: 0),
       accountName: Text('User Name'),
       accountEmail: Text('User Email'),
       currentAccountPicture: CircleAvatar(
         child: FlutterLogo(
-          size: 42,
+          size: 32,
         ),
         backgroundColor: Colors.white,
       ),
@@ -49,23 +56,26 @@ class MyHomePage extends StatelessWidget {
       children: <Widget>[
         drawerHeader,
         ListTile(
-          title: Text('Events'),
-          onTap: () => Navigator.push(context,
-              MaterialPageRoute(builder: (BuildContext context) => Events())),
-        ),
-        ListTile(
           title: Text('To do'),
           onTap: () => Navigator.push(context,
               MaterialPageRoute(builder: (BuildContext context) => ToDo())),
         ),
         ListTile(
-          title: Text('Documents'),
-          onTap: () => null,
+          title: Text('Lease events'),
+          onTap: () => Navigator.push(context,
+              MaterialPageRoute(builder: (BuildContext context) => Events())),
         ),
         Divider(
           height: 0,
           indent: 15,
           color: Colors.blueAccent,
+        ),
+        ListTile(
+          title: Text('Your properties'),
+          onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) => Properties())),
         ),
         ListTile(
           title: Text('Tenants'),
@@ -79,14 +89,22 @@ class MyHomePage extends StatelessWidget {
           title: Text('Agents'),
           onTap: () => null,
         ),
+        ListTile(
+          title: Text('Documents'),
+          onTap: () => null,
+        ),
         Divider(
           height: 0,
           indent: 15,
           color: Colors.blueAccent,
         ),
         ListTile(
-          title: Text('Log Out'),
-          onTap: () => null,
+          title: Text('Log In'),
+//          onTap: () => null,
+          onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext context) => LoginButton())),
         ),
         ListTile(
           title: Text('Settings'),

@@ -9,7 +9,9 @@ class ToDo extends StatelessWidget {
       ),
       body: Center(
         child: RaisedButton(
-            child: Text('Show To do or events  list'),
+            child: Text(
+              'Show To do or events  list',
+            ),
             color: Theme.of(context).primaryColor,
             textColor: Colors.white,
             onPressed: () => Navigator.pop(context)),
