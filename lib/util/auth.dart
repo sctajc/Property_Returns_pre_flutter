@@ -4,6 +4,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rxdart/rxdart.dart';
 
+import 'package:property_returns/main.dart' as homepage;
 import 'package:property_returns/util/user.dart';
 
 String userName;
@@ -73,7 +74,6 @@ class AuthService {
     return ref.setData({
       'uid': user.uid,
       'email': user.email,
-//      'photoURL': user.,
       'displayName': user.displayName,
       'lastSeen': DateTime.now(),
     });
@@ -123,7 +123,18 @@ class LoginButton extends StatelessWidget {
                       );
                     } else {
                       return MaterialButton(
-                        onPressed: () => authService.googleSignIn(),
+                        onPressed: () {
+                          authService.googleSignIn();
+                          var route = MaterialPageRoute(
+                            builder: (BuildContext context) => homepage.MyApp(
+                                    value: User(
+                                  uid: userUid,
+                                  username: userName,
+                                  email: userEmail,
+                                )),
+                          );
+                          Navigator.of(context).push(route);
+                        },
                         color: Colors.white,
                         textColor: Colors.black,
                         child: Text('Login with Google'),

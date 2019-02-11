@@ -1,10 +1,10 @@
 class User {
-  final String username, email, password, imageUrl;
+  final String uid, username, email, imageUrl;
 
   const User({
+    this.uid,
     this.username,
     this.email,
-    this.password,
     this.imageUrl,
   });
 }
