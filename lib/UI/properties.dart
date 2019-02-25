@@ -1,16 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'package:property_returns/UI/property_details.dart';
+import 'package:property_returns/UI/unit_details.dart';
+
 class Properties extends StatelessWidget {
   Widget _property(BuildContext context, DocumentSnapshot document) {
     return ListTile(
       title: Row(
         children: <Widget>[
+          // display property
           Expanded(
+              child: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          PropertyDetails(document['propertyid'])));
+            },
+            child: Container(
               child: Text(
-            document['propertyname'],
-            style: Theme.of(context).textTheme.title,
+                document['propertyname'],
+                style: Theme.of(context).textTheme.title,
+              ),
+            ),
           )),
+          // display units for a property
           Expanded(
             child: Container(
                 child: StreamBuilder(
@@ -21,7 +37,7 @@ class Properties extends StatelessWidget {
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) return const Text('Loading');
                       return ListView.builder(
-                        itemExtent: 15,
+                        itemExtent: 20,
                         itemCount: snapshot.data.documents.length,
                         itemBuilder: (context, index) =>
                             _units(context, snapshot.data.documents[index]),
@@ -34,15 +50,25 @@ class Properties extends StatelessWidget {
   }
 
   Widget _units(BuildContext context, DocumentSnapshot document) {
-    return ListTile(
-      title: Row(
-        children: <Widget>[
-          Expanded(
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => UnitDetails(document['unitid'])));
+      },
+      child: ListTile(
+        title: Row(
+          children: <Widget>[
+            Expanded(
+                child: Container(
               child: Text(
-            document['unitname'],
-            style: Theme.of(context).textTheme.body1,
-          ))
-        ],
+                document['unitname'],
+                style: Theme.of(context).textTheme.body1,
+              ),
+            ))
+          ],
+        ),
       ),
     );
   }
