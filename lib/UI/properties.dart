@@ -1,30 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Propertiess extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(title: Text('Your Properties')),
-      body: new StreamBuilder(
-          stream: Firestore.instance.collection('properties').snapshots(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) const Text('Loading...');
-            return ListView.builder(
-                itemCount: snapshot.data.documents.length,
-                padding: const EdgeInsets.all(25.0),
-                itemBuilder: (context, index) {
-                  DocumentSnapshot ds = snapshot.data.documents[index];
-                  return Text(
-                    '${ds['propertyname']}:\n${ds['propertyaddress']}\n---',
-                    style: TextStyle(fontSize: 18.0),
-                  );
-                });
-          }),
-    );
-  }
-}
-
 class Properties extends StatelessWidget {
   Widget _property(BuildContext context, DocumentSnapshot document) {
     return ListTile(
@@ -33,7 +9,38 @@ class Properties extends StatelessWidget {
           Expanded(
               child: Text(
             document['propertyname'],
-            style: Theme.of(context).textTheme.headline,
+            style: Theme.of(context).textTheme.title,
+          )),
+          Expanded(
+            child: Container(
+                child: StreamBuilder(
+                    stream: Firestore.instance
+                        .collection('units')
+                        .where('propertyid', isEqualTo: document['propertyid'])
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData) return const Text('Loading');
+                      return ListView.builder(
+                        itemExtent: 15,
+                        itemCount: snapshot.data.documents.length,
+                        itemBuilder: (context, index) =>
+                            _units(context, snapshot.data.documents[index]),
+                      );
+                    })),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _units(BuildContext context, DocumentSnapshot document) {
+    return ListTile(
+      title: Row(
+        children: <Widget>[
+          Expanded(
+              child: Text(
+            document['unitname'],
+            style: Theme.of(context).textTheme.body1,
           ))
         ],
       ),

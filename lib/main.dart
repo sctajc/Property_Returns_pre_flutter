@@ -6,12 +6,9 @@ import 'package:flutter/rendering.dart';
 import 'util/auth.dart';
 import 'package:property_returns/util/user.dart';
 
-String _uid = '1234';
-String _userName = 'Stephen Thoms';
-String _userEmail = 'stephen@propertyreturns.co.nz';
-
 void main() {
 //  debugPaintSizeEnabled = true;
+
   runApp(MyApp());
 }
 
@@ -23,17 +20,21 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (value == null) {
+      print('value.hascode is null');
+    }
     return MaterialApp(
       title: appTitle,
-      home: MyHomePage(title: appTitle),
+      home: MyHomePage(title: appTitle, value: value),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
   final String title;
+  final User value;
 
-  MyHomePage({Key key, this.title}) : super(key: key);
+  MyHomePage({Key key, this.title, this.value}) : super(key: key);
 
   @override
   MyHomePageState createState() {
@@ -44,10 +45,9 @@ class MyHomePage extends StatefulWidget {
 class MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    if (_uid == null) {
-      _userName = "Please Log In";
-      _userEmail = "";
-    }
+    String _uid = '1234';
+    String _userName = 'Stephen Thoms';
+    String _userEmail = 'stephen@propertyreturns.co.nz';
 
     final drawerHeader = UserAccountsDrawerHeader(
       margin: EdgeInsets.only(bottom: 0, top: 0),
@@ -119,7 +119,6 @@ class MyHomePageState extends State<MyHomePage> {
           color: Colors.blueAccent,
         ),
         ListTile(
-//            widget?.value?.uid ?? false
           title: Text(_uid == null ? 'Log in' : 'Log out'),
           onTap: () {
             if (_uid == null) {
@@ -131,16 +130,8 @@ class MyHomePageState extends State<MyHomePage> {
             } else {
               // Log out
               authService.signOut();
-//              Navigator.push(
-//                  context,
-//                  MaterialPageRoute(
-//                      builder: (BuildContext context) => LoginButton()));
             }
           },
-//            onTap: () => Navigator.push(
-//                context,
-//                MaterialPageRoute(
-//                    builder: (BuildContext context) => LoginButton()))
         ),
         ListTile(
           title: Text('Settings'),
@@ -149,9 +140,13 @@ class MyHomePageState extends State<MyHomePage> {
       ],
     );
 
+    final frontPage = ListTile(
+      title: Text('jjjkkkj'),
+    );
+
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
-      body: Center(child: Text('My Page!')),
+      body: Center(child: frontPage),
       drawer: Drawer(child: drawerItems),
     );
   }
