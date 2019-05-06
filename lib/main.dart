@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'UI/events.dart';
-import 'UI/to_do.dart';
-import 'UI/properties.dart';
+import 'package:property_returns/UI/lease_events/events.dart';
+import 'package:property_returns/ui/tasks/tasks.dart';
+import 'package:property_returns/UI/properties/properties.dart';
 import 'package:flutter/rendering.dart';
 import 'util/auth.dart';
 import 'package:property_returns/util/user.dart';
+import 'package:property_returns/home_page.dart';
 
 void main() {
 //  debugPaintSizeEnabled = true;
@@ -21,7 +22,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (value == null) {
-      print('value.hascode is null');
+      print('MyApp - value.hascode is null ie user is not signed in');
+    } else {
+      print(
+          'MyApp- -value.hascode is not null ie user is signed in ${value.uid}');
     }
     return MaterialApp(
       title: appTitle,
@@ -38,21 +42,58 @@ class MyHomePage extends StatefulWidget {
 
   @override
   MyHomePageState createState() {
-    return new MyHomePageState();
+    if (value == null) {
+      print('MyHomePage - value.hascode is null ie user is not signed in');
+    } else {
+      print(
+          'MyHomePage - value.hascode is not null ie user is signed in ${value.uid} ${value.username} ${value.email}');
+    }
+    return new MyHomePageState(value: value);
   }
 }
 
 class MyHomePageState extends State<MyHomePage> {
+  final User value;
+
+  MyHomePageState({this.value});
+
   @override
   Widget build(BuildContext context) {
-    String _uid = '1234';
-    String _userName = 'Stephen Thoms';
-    String _userEmail = 'stephen@propertyreturns.co.nz';
+    if (value == null) {
+      print('MyHomePageState - value.hascode is null ie user is not signed in');
+    } else {
+      print(
+          'MyHomePageState - value.hascode is not null ie user is signed in uid = $value ${value.uid} ${value.username} ${value.email}');
+    }
+
+    String uid;
+    if (value != null) {
+      uid = '${value.uid}';
+    }
+
+    String _userName;
+    if (value != null) {
+      _userName = '${value.username}';
+    }
+
+    String _userEmail;
+    if (value != null) {
+      _userEmail = '${value.email}';
+    }
+
+//    String _uid = (value == null) ? null : '${value.uid}';
+//    print('_uid = $_uid');
+//    String _userName = (value == null) ? null : '${value.username}';
+//    String _userEmail = (value == null) ? null : '${value.email}';
 
     final drawerHeader = UserAccountsDrawerHeader(
       margin: EdgeInsets.only(bottom: 0, top: 0),
-      accountName: Text('$_userName'),
-      accountEmail: Text('$_userEmail'),
+      accountName: Text(uid == null
+          ? 'You are not logged in and not required.'
+          : 'Preturns'), //'$_userName'),
+      accountEmail: Text(uid == null
+          ? 'Login to use your Google Contacts etc'
+          : 'preturns99@gmail.com'), // '$_userEmail'),
       currentAccountPicture: CircleAvatar(
         child: FlutterLogo(
           size: 32,
@@ -76,9 +117,9 @@ class MyHomePageState extends State<MyHomePage> {
       children: <Widget>[
         drawerHeader,
         ListTile(
-          title: Text('To do'),
+          title: Text('Tasks'),
           onTap: () => Navigator.push(context,
-              MaterialPageRoute(builder: (BuildContext context) => ToDo())),
+              MaterialPageRoute(builder: (BuildContext context) => Tasks())),
         ),
         ListTile(
           title: Text('Lease events'),
@@ -119,9 +160,9 @@ class MyHomePageState extends State<MyHomePage> {
           color: Colors.blueAccent,
         ),
         ListTile(
-          title: Text(_uid == null ? 'Log in' : 'Log out'),
+          title: Text(uid == null ? 'Log in' : 'Log out'),
           onTap: () {
-            if (_uid == null) {
+            if (uid == null) {
               // Log in
               Navigator.push(
                   context,
@@ -139,14 +180,9 @@ class MyHomePageState extends State<MyHomePage> {
         ),
       ],
     );
-
-    final frontPage = ListTile(
-      title: Text('jjjkkkj'),
-    );
-
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
-      body: Center(child: frontPage),
+      body: Center(child: HomePage()),
       drawer: Drawer(child: drawerItems),
     );
   }

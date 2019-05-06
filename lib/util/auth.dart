@@ -40,32 +40,23 @@ class AuthService {
   }
 
   Future<FirebaseUser> googleSignIn() async {
-    // start
-    loading.add(true);
+    try {
+      loading.add(true);
+      GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+      GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final AuthCredential credential = GoogleAuthProvider.getCredential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      FirebaseUser user = await _auth.signInWithCredential(credential);
 
-    // Step 1 - Login with Google. This shows Google’s native login screen and provides the idToken and accessToken.
-    GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-
-    // Step 2 - Login to Firebase. At this point, the user is logged into Google, but not Firebase. We can simply pass the tokens to Firebase to login.
-    GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-    FirebaseUser user = await _auth.signInWithGoogle(
-        idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
-
-    // Step 3 - Update Firestore. At this point, we can update the database with any custom data we want to use in the UI.
-    updateUserData(user);
-
-    // Done
-    loading.add(false);
-
-    // make user name and email available  in appbar etc
-    userName = user.displayName;
-    userEmail = user.email;
-    userUid = user.uid;
-
-    print("signed in " + user.displayName);
-    print('user email: $userEmail');
-
-    return user;
+      updateUserData(user);
+      print("signed in " + user.displayName);
+      loading.add(false);
+      return user;
+    } catch (error) {
+      return error;
+    }
   }
 
   void updateUserData(FirebaseUser user) async {
@@ -79,8 +70,13 @@ class AuthService {
     });
   }
 
-  void signOut() {
-    _auth.signOut();
+  Future<String> signOut() async {
+    try {
+      await _auth.signOut();
+      return 'SignOut';
+    } catch (e) {
+      return e.toString();
+    }
   }
 }
 
