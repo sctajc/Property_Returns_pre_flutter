@@ -7,11 +7,11 @@ import 'package:rxdart/rxdart.dart';
 import 'package:property_returns/main.dart' as homepage;
 import 'package:property_returns/util/user.dart';
 
-String userName;
-String userEmail;
-String userUid;
-
 class AuthService {
+  String userName;
+  String userEmail;
+  String userUid;
+
   // Dependencies
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -25,7 +25,6 @@ class AuthService {
 // constructor
   AuthService() {
     user = Observable(_auth.onAuthStateChanged);
-
     profile = user.switchMap((FirebaseUser u) {
       if (u != null) {
         return _db
@@ -40,23 +39,25 @@ class AuthService {
   }
 
   Future<FirebaseUser> googleSignIn() async {
-    try {
-      loading.add(true);
-      GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-      GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-      final AuthCredential credential = GoogleAuthProvider.getCredential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-      FirebaseUser user = await _auth.signInWithCredential(credential);
+    loading.add(true);
+    GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+    GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    final AuthCredential credential = GoogleAuthProvider.getCredential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+    FirebaseUser user = await _auth.signInWithCredential(credential);
 
-      updateUserData(user);
-      print("signed in " + user.displayName);
-      loading.add(false);
-      return user;
-    } catch (error) {
-      return error;
-    }
+    updateUserData(user);
+    print("signed in " + user.displayName);
+    loading.add(false);
+
+    //see if this works
+    userName = user.displayName;
+    userEmail = user.email;
+    userUid = user.uid;
+
+    return user;
   }
 
   void updateUserData(FirebaseUser user) async {
@@ -110,8 +111,8 @@ class LoginButton extends StatelessWidget {
                             padding: EdgeInsets.all(30),
                             child: Column(
                               children: <Widget>[
-                                Text('You are signed in as $userName'),
-                                Text('$userEmail'),
+//                                Text('You are signed in as $userName'),
+//                                Text('$email'),
                               ],
                             ),
                           )
@@ -122,12 +123,7 @@ class LoginButton extends StatelessWidget {
                         onPressed: () {
                           authService.googleSignIn();
                           var route = MaterialPageRoute(
-                            builder: (BuildContext context) => homepage.MyApp(
-                                    value: User(
-                                  uid: userUid,
-                                  username: userName,
-                                  email: userEmail,
-                                )),
+                            builder: (BuildContext context) => homepage.MyApp(),
                           );
                           Navigator.of(context).push(route);
                         },

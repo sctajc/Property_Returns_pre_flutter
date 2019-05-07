@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:property_returns/UI/tasks/task_information.dart';
+import 'package:property_returns/util/auth.dart';
 
 class TaskDetail extends StatefulWidget {
   final String title;
@@ -20,6 +21,8 @@ class TaskDetail extends StatefulWidget {
 }
 
 class _TaskDetailState extends State<TaskDetail> {
+  Map<String, dynamic> _profile;
+
   final _formKey = GlobalKey<FormState>();
   var taskImportance = [
     'Very Important',
@@ -57,6 +60,12 @@ class _TaskDetailState extends State<TaskDetail> {
 
   @override
   Widget build(BuildContext context) {
+    authService.profile.listen((state) => setState(() => _profile = state));
+//    authService.loading.listen((state) => setState(() => _loading = state));
+    authService.user.toString();
+
+    String _uid = '1111111111111111'; //_profile['uid'];
+
     String buttonSaveUpdateText = widget.title == '' ? 'Create' : 'Update';
 
     return Scaffold(
@@ -169,6 +178,7 @@ class _TaskDetailState extends State<TaskDetail> {
                                     "detail": _taskDetailController.text,
                                     "createdDateTime": DateTime.now(),
                                     "archived": 'n',
+                                    "uid": _uid,
                                   })
                                   .then((result) => {
                                         Navigator.pop(context),

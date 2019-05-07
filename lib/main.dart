@@ -9,91 +9,57 @@ import 'package:property_returns/home_page.dart';
 
 void main() {
 //  debugPaintSizeEnabled = true;
-
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final appTitle = 'Property Returns';
-  final User value;
-
-  MyApp({Key key, this.value}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
-    if (value == null) {
-      print('MyApp - value.hascode is null ie user is not signed in');
-    } else {
-      print(
-          'MyApp- -value.hascode is not null ie user is signed in ${value.uid}');
-    }
     return MaterialApp(
-      title: appTitle,
-      home: MyHomePage(title: appTitle, value: value),
+      title: 'Property Returns',
+      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  final String title;
-  final User value;
-
-  MyHomePage({Key key, this.title, this.value}) : super(key: key);
-
   @override
-  MyHomePageState createState() {
-    if (value == null) {
-      print('MyHomePage - value.hascode is null ie user is not signed in');
-    } else {
-      print(
-          'MyHomePage - value.hascode is not null ie user is signed in ${value.uid} ${value.username} ${value.email}');
-    }
-    return new MyHomePageState(value: value);
+  _MyHomePageState createState() {
+    return new _MyHomePageState();
   }
 }
 
-class MyHomePageState extends State<MyHomePage> {
-  final User value;
+class _MyHomePageState extends State<MyHomePage> {
+  Map<String, dynamic> _profile;
+  bool _loading = false;
 
-  MyHomePageState({this.value});
+  String displayName;
+  String email;
+  String uid;
 
   @override
   Widget build(BuildContext context) {
-    if (value == null) {
-      print('MyHomePageState - value.hascode is null ie user is not signed in');
-    } else {
-      print(
-          'MyHomePageState - value.hascode is not null ie user is signed in uid = $value ${value.uid} ${value.username} ${value.email}');
-    }
+    authService.profile.listen((state) => setState(() => _profile = state));
+    authService.loading.listen((state) => setState(() => _loading = state));
+    authService.user.toString();
 
-    String uid;
-    if (value != null) {
-      uid = '${value.uid}';
-    }
+    print('_profile in build = $_profile');
 
-    String _userName;
-    if (value != null) {
-      _userName = '${value.username}';
-    }
+    displayName = _profile == null
+        ? 'Not Signed In'
+        : '${_profile['displayName'].toString()}';
+    if (displayName.length < 1) displayName = 'Not Signed In';
 
-    String _userEmail;
-    if (value != null) {
-      _userEmail = '${value.email}';
-    }
-
-//    String _uid = (value == null) ? null : '${value.uid}';
-//    print('_uid = $_uid');
-//    String _userName = (value == null) ? null : '${value.username}';
-//    String _userEmail = (value == null) ? null : '${value.email}';
+    email = _profile['email'].toString();
+    uid = _profile['uid'].toString();
 
     final drawerHeader = UserAccountsDrawerHeader(
       margin: EdgeInsets.only(bottom: 0, top: 0),
-      accountName: Text(uid == null
+      accountName: Text(displayName == null
           ? 'You are not logged in and not required.'
-          : 'Preturns'), //'$_userName'),
-      accountEmail: Text(uid == null
-          ? 'Login to use your Google Contacts etc'
-          : 'preturns99@gmail.com'), // '$_userEmail'),
+          : '$displayName'),
+      accountEmail: Text(
+          email == null ? 'Login to use your Google Contacts etc' : '$email'),
       currentAccountPicture: CircleAvatar(
         child: FlutterLogo(
           size: 32,
@@ -160,9 +126,9 @@ class MyHomePageState extends State<MyHomePage> {
           color: Colors.blueAccent,
         ),
         ListTile(
-          title: Text(uid == null ? 'Log in' : 'Log out'),
+          title: Text(_profile['uid'] == null ? 'Log in' : 'Log out'),
           onTap: () {
-            if (uid == null) {
+            if (_profile['uid'] == null) {
               // Log in
               Navigator.push(
                   context,
@@ -181,7 +147,7 @@ class MyHomePageState extends State<MyHomePage> {
       ],
     );
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title)),
+      appBar: AppBar(),
       body: Center(child: HomePage()),
       drawer: Drawer(child: drawerItems),
     );
