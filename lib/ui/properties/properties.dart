@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:property_returns/UI/properties/property_details.dart';
 import 'package:property_returns/UI/properties/unit_details.dart';
+import 'package:property_returns/ui/properties/property_information.dart';
+import 'package:property_returns/util/my_icons_icons.dart';
 
 class Properties extends StatelessWidget {
   Widget _property(BuildContext context, DocumentSnapshot document) {
@@ -16,6 +18,7 @@ class Properties extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
+                  if (document['propertyid'] == 'rrr') Text('jjj'),
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -86,6 +89,7 @@ class Properties extends StatelessWidget {
       },
       child: Text(
         document['unitname'],
+        maxLines: 1,
         style: TextStyle(fontSize: 15),
       ),
     );
@@ -94,9 +98,18 @@ class Properties extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Properties'),
-      ),
+      appBar: AppBar(title: Text('Properties'), actions: <Widget>[
+        IconButton(
+            icon: Icon(MyIcons.assessment),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PropertyInformation(),
+                ),
+              );
+            })
+      ]),
       // Display all properties
       body: StreamBuilder(
           stream: Firestore.instance
