@@ -12,7 +12,6 @@ class TaskDetail extends StatefulWidget {
   final int importance;
   final String detail;
   final String documentID;
-
   TaskDetail(this.title, this.dueDateTime, this.importance, this.detail,
       this.documentID);
 
@@ -64,6 +63,7 @@ class _TaskDetailState extends State<TaskDetail> {
 //    authService.loading.listen((state) => setState(() => _loading = state));
     authService.user.toString();
 
+    // toDo get user _uid from profile. Not this!!
     String _uid = '1111111111111111'; //_profile['uid'];
 
     String buttonSaveUpdateText = widget.title == '' ? 'Create' : 'Update';

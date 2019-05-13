@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class TaskInformation extends StatelessWidget {
+class PropertyInformation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Task Information'),
+        title: Text('Property Information'),
       ),
       body: Center(
         child: Container(

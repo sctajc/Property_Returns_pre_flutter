@@ -1,302 +1,407 @@
+// property_details bases on task_details
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'package:property_returns/UI/properties/property_db.dart';
 import 'package:property_returns/util/my_icons_icons.dart';
 import 'package:property_returns/UI/properties/properties.dart';
+import 'package:property_returns/ui/properties/property_information.dart';
+import 'package:property_returns/util/my_icons_icons.dart';
+import 'package:property_returns/util/auth.dart';
 
 class PropertyDetails extends StatefulWidget {
-  final String propertyId;
+  final String propertyName;
+  final String propertyAddress;
+  final String propertyNotes;
+  final String propertyZone;
+  final String propertyLegalDescription;
+  final String propertyDatePurchased;
+  final String propertyLandArea;
+  final String propertyInsurancePolicy;
+  final String propertyInsuranceAmount;
+  final String propertyInsuranceDate;
+  final String propertyInsuranceSource;
+  final String propertyMarketValuation;
+  final String propertyMarketValuationDate;
+  final String propertyMarketValuationSource;
+  final String documentID;
 
-  PropertyDetails(this.propertyId);
+  PropertyDetails(
+    this.propertyName,
+    this.propertyAddress,
+    this.propertyNotes,
+    this.propertyZone,
+    this.propertyLegalDescription,
+    this.propertyDatePurchased,
+    this.propertyLandArea,
+    this.propertyInsurancePolicy,
+    this.propertyInsuranceAmount,
+    this.propertyInsuranceDate,
+    this.propertyInsuranceSource,
+    this.propertyMarketValuation,
+    this.propertyMarketValuationDate,
+    this.propertyMarketValuationSource,
+    this.documentID,
+  );
 
   @override
   _PropertyDetailsState createState() => _PropertyDetailsState();
 }
 
 class _PropertyDetailsState extends State<PropertyDetails> {
-  String propertyName = 'jjjj';
+  Map<String, dynamic> _profile;
 
-  sendToServer() {
-//    save property data
-    Firestore.instance.runTransaction((Transaction transaction) async {
-      CollectionReference reference =
-          Firestore.instance.collection('properties');
-      await reference.add({"Title": "$propertyName", "Author": "author"});
-    });
-    // navigate back to properties
-    Navigator.push(context,
-        MaterialPageRoute(builder: (BuildContext context) => Properties()));
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController _propertyNameController = TextEditingController();
+  final TextEditingController _propertyAddressController =
+      TextEditingController();
+  final TextEditingController _propertyNotesController =
+      TextEditingController();
+  final TextEditingController _propertyZoneController = TextEditingController();
+  final TextEditingController _propertyLegalDescriptionController =
+      TextEditingController();
+  final TextEditingController _propertyDatePurchasedController =
+      TextEditingController();
+  final TextEditingController _propertyLandAreaController =
+      TextEditingController();
+  final TextEditingController _propertyInsurancePolicyController =
+      TextEditingController();
+  final TextEditingController _propertyInsuranceAmountController =
+      TextEditingController();
+  final TextEditingController _propertyInsuranceDateController =
+      TextEditingController();
+  final TextEditingController _propertyInsuranceSourceController =
+      TextEditingController();
+  final TextEditingController _propertyMarketValuationController =
+      TextEditingController();
+  final TextEditingController _propertyMarketValuationDateController =
+      TextEditingController();
+  final TextEditingController _propertyMarketValuationSourceController =
+      TextEditingController();
+
+  bool _isDeleteButtonDisabled;
+  bool _isArchiveButtonDisabled;
+
+  @override
+  void initState() {
+    super.initState();
+    _propertyNameController.text = widget.propertyName;
+    _propertyAddressController.text = widget.propertyAddress;
+    _propertyNotesController.text = widget.propertyNotes;
+    _propertyZoneController.text = widget.propertyZone;
+    _propertyLegalDescriptionController.text = widget.propertyLegalDescription;
+    _propertyDatePurchasedController.text = widget.propertyDatePurchased;
+    _propertyLandAreaController.text = widget.propertyLandArea;
+    _propertyInsurancePolicyController.text = widget.propertyInsurancePolicy;
+    _propertyInsuranceAmountController.text = widget.propertyInsuranceAmount;
+    _propertyInsuranceDateController.text = widget.propertyInsuranceDate;
+    _propertyInsuranceSourceController.text = widget.propertyInsuranceSource;
+    _propertyMarketValuationController.text = widget.propertyMarketValuation;
+    _propertyMarketValuationDateController.text =
+        widget.propertyMarketValuationDate;
+    _propertyMarketValuationSourceController.text =
+        widget.propertyMarketValuationSource;
+
+    _isDeleteButtonDisabled = widget.documentID.isEmpty ? true : false;
+    _isArchiveButtonDisabled = widget.documentID.isEmpty ? true : false;
   }
 
-  Widget _propertyDetails(BuildContext context, DocumentSnapshot document) {
-//    print('I am here');
-//    print(document[propertyname]);
-    String _validateName(String value) {
-      if (value.isEmpty) return 'Property name is required';
-      return null;
-    }
-
-//    if(document['propertyname'] == null ) document['propertyname'] = '';
-
-//    var _propertyNameController;
-//    if (document['propertyname']) {
-//      var _propertyNameController =
-//          TextEditingController(text: document['propertyname']);
-//    } else {
-//      TextEditingController(text: '');
-//    }
-
-    var _propertyNameController =
-        TextEditingController(text: document['propertyname']);
-    var _propertyAddressController =
-        TextEditingController(text: document['propertyaddress']);
-    var _propertyNotesController =
-        TextEditingController(text: document['propertynotes']);
-    var _propertyZoneController =
-        TextEditingController(text: document['propertyzone']);
-    var _propertyLegalDescriptionController =
-        TextEditingController(text: document['propertylegaldescription']);
-    var _propertyDatePurchasedController =
-        TextEditingController(text: document['propertydatepurchased']);
-    var _propertyLandAreaController =
-        TextEditingController(text: document['propertylandarea']);
-    var _propertyInsurancePolicyController =
-        TextEditingController(text: document['propertyinsurancepolicy']);
-    var _propertyInsuranceAmountController =
-        TextEditingController(text: document['propertyinsuranceamount']);
-    var _propertyInsuranceDateController =
-        TextEditingController(text: document['propertyinsurancedate']);
-    var _propertyInsuranceSourceController =
-        TextEditingController(text: document['propertyinsurancesource']);
-    var _propertyMarketValuationController =
-        TextEditingController(text: document['propertymarketvaluation']);
-    var _propertyMarketValuationDateController =
-        TextEditingController(text: document['propertymarketvaluationdate']);
-    var _propertyMarketValuationSourceController =
-        TextEditingController(text: document['propertymarketvaluationsource']);
-
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            SizedBox(height: 24),
-            TextFormField(
-              textCapitalization: TextCapitalization.words,
-              decoration: InputDecoration(
-                border: UnderlineInputBorder(),
-                filled: true,
-                labelText: 'Property Name',
-                hintText: 'A convient name eg Jones St corner',
-              ),
-              controller: _propertyNameController,
-              validator: _validateName,
-              onSaved: (String val) {
-                propertyName = 'onSaved property Name'; //val;
-                print('Saving Property Name: $propertyName');
-              },
-            ),
-            SizedBox(height: 24),
-            TextFormField(
-              decoration: InputDecoration(
-                border: UnderlineInputBorder(),
-                filled: true,
-                labelText: 'Property Address',
-                hintText: 'eg 123 Smart Rd',
-                suffixIcon: Icon(Icons.my_location),
-              ),
-              controller: _propertyAddressController,
-            ),
-            SizedBox(height: 24),
-            TextFormField(
-              decoration: InputDecoration(
-                  border: UnderlineInputBorder(),
-                  filled: true,
-                  labelText: 'Property Zone',
-                  hintText: 'Light Industrial'),
-              controller: _propertyZoneController,
-            ),
-            SizedBox(height: 24),
-            TextFormField(
-              maxLines: 4,
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Property Notes',
-                  hintText: 'Whatever',
-                  helperText: 'Keep short'),
-              controller: _propertyNotesController,
-            ),
-            SizedBox(height: 24),
-            TextFormField(
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                  border: UnderlineInputBorder(),
-                  filled: true,
-                  suffixIcon: Icon(Icons.photo_album),
-                  labelText: 'Land Area',
-                  hintText: 'Land area. Not building area',
-                  helperText: 'm2',
-                  prefixText: 'm2: '),
-              controller: _propertyLandAreaController,
-            ),
-            SizedBox(height: 24),
-            TextFormField(
-              keyboardType: TextInputType.datetime,
-              decoration: InputDecoration(
-                  border: UnderlineInputBorder(),
-                  filled: true,
-                  labelText: 'Date Purchased'),
-              controller: _propertyDatePurchasedController,
-            ),
-            SizedBox(height: 24),
-            TextFormField(
-              decoration: InputDecoration(
-                  border: UnderlineInputBorder(),
-                  filled: true,
-                  labelText: 'property Legal Description',
-                  hintText: 'Whatever you call it'),
-              controller: _propertyLegalDescriptionController,
-            ),
-            SizedBox(height: 24),
-            TextFormField(
-              decoration: InputDecoration(
-                  border: UnderlineInputBorder(),
-                  filled: true,
-                  labelText: 'Insurance Policy',
-                  hintText: 'Insurance company/policy number'),
-              controller: _propertyInsurancePolicyController,
-            ),
-            SizedBox(height: 24),
-            TextFormField(
-              decoration: InputDecoration(
-                  border: UnderlineInputBorder(),
-                  filled: true,
-                  labelText: 'Date of Insurance'),
-              controller: _propertyInsuranceDateController,
-            ),
-            SizedBox(height: 24),
-            TextFormField(
-              decoration: InputDecoration(
-                  border: UnderlineInputBorder(),
-                  filled: true,
-                  labelText: 'Insurance Amount',
-                  hintText: 'Whatever you call it'),
-              controller: _propertyInsuranceAmountController,
-            ),
-            SizedBox(height: 24),
-            TextFormField(
-              decoration: InputDecoration(
-                  border: UnderlineInputBorder(),
-                  filled: true,
-                  labelText: 'Insurance Source'),
-              controller: _propertyInsuranceSourceController,
-            ),
-            SizedBox(height: 24),
-            TextFormField(
-              decoration: InputDecoration(
-                  border: UnderlineInputBorder(),
-                  filled: true,
-                  labelText: 'Market Valuation'),
-              controller: _propertyMarketValuationController,
-            ),
-            SizedBox(height: 24),
-            TextFormField(
-              decoration: InputDecoration(
-                  border: UnderlineInputBorder(),
-                  filled: true,
-                  labelText: 'Valuation Date'),
-              controller: _propertyMarketValuationDateController,
-            ),
-            SizedBox(height: 24),
-            TextFormField(
-              decoration: InputDecoration(
-                  border: UnderlineInputBorder(),
-                  filled: true,
-                  labelText: 'Valuation Source'),
-              controller: _propertyMarketValuationSourceController,
-            ),
-            SizedBox(height: 24),
-            Row(
-              children: <Widget>[
-                Padding(
-                  child: Text(
-                    "Property Id ${document['propertyid']}  --  ",
-                    style:
-                        TextStyle(fontWeight: FontWeight.normal, fontSize: 10),
-                    textAlign: TextAlign.center,
-                  ),
-                  padding: EdgeInsets.only(bottom: 5),
-                ),
-                Padding(
-                  child: Text(
-                    "Display order ${document['displayorder'].toString()}",
-                    style:
-                        TextStyle(fontWeight: FontWeight.normal, fontSize: 10),
-                    textAlign: TextAlign.center,
-                  ),
-                  padding: EdgeInsets.only(bottom: 5),
-                ),
-              ],
-            ),
-          ]),
-    );
+  @override
+  void dispose() {
+    _propertyNameController.dispose();
+    _propertyAddressController.dispose();
+    _propertyNotesController.dispose();
+    _propertyZoneController.dispose();
+    _propertyLegalDescriptionController.dispose();
+    _propertyDatePurchasedController.dispose();
+    _propertyLandAreaController.dispose();
+    _propertyInsurancePolicyController.dispose();
+    _propertyInsuranceAmountController.dispose();
+    _propertyInsuranceDateController.dispose();
+    _propertyInsuranceSourceController.dispose();
+    _propertyMarketValuationController.dispose();
+    _propertyMarketValuationDateController.dispose();
+    _propertyMarketValuationSourceController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    authService.profile.listen((state) => setState(() => _profile = state));
+//    authService.loading.listen((state) => setState(() => _loading = state));
+    authService.user.toString();
+
+    // toDo get user _uid from profile. Not this!!
+    String _uid = '1111111111111111'; //_profile['uid'];
+
+    String buttonSaveUpdateText =
+        widget.propertyName == '' ? 'Create' : 'Update';
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Property Details'),
         actions: <Widget>[
-          // Save new property or save changes
-          IconButton(icon: Icon(MyIcons.done), onPressed: sendToServer //() {
-              )
+          IconButton(
+              icon: Icon(MyIcons.assessment),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PropertyInformation(),
+                  ),
+                );
+              })
         ],
       ),
-      body: StreamBuilder(
-          stream: Firestore.instance
-              .collection('properties')
-              .where('propertyid', isEqualTo: '${widget.propertyId}')
-              .snapshots(),
-          builder: (context, snapshot) {
-            if ('${widget.propertyId}' == 'newproperty')
-              return ListView.builder(
-                shrinkWrap: true,
-                itemExtent: null,
-                itemBuilder: (context, index) =>
-                    _propertyDetails(context, null),
-              );
-
-            if (!snapshot.hasData) return const Text('Loading');
-
-            return ListView.builder(
-              shrinkWrap: true,
-              itemExtent: null,
-              itemCount: snapshot.data.documents.length,
-              itemBuilder: (context, index) =>
-                  _propertyDetails(context, snapshot.data.documents[index]),
-            );
-          }),
+      body: Form(
+        key: _formKey,
+        child: Container(
+          child: Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: ListView(
+              children: <Widget>[
+                TextFormField(
+                  controller: _propertyNameController,
+                  autofocus: widget.documentID.isEmpty ? true : false,
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'A common name for this property',
+                      labelText: 'Property Name'),
+                  validator: (value) {
+                    if (value.isEmpty) {
+                      return 'Please enter a property name';
+                    }
+                  },
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                TextFormField(
+                  controller: _propertyAddressController,
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'The property street address',
+                      labelText: 'Property Address'),
+//                  validator: (value) {
+//                    if (value.isEmpty) {
+//                      return 'Please enter a property Address';
+//                    }
+//                  },
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                TextFormField(
+                  controller: _propertyNotesController,
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'property notes',
+                      labelText: 'Property Notes'),
+//                  validator: (value) {
+//                    if (value.isEmpty) {
+//                      return 'Please enter a property Notes';
+//                    }
+//                  },
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                TextFormField(
+                  controller: _propertyZoneController,
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'property zone',
+                      labelText: 'Property Zone'),
+//                  validator: (value) {
+//                    if (value.isEmpty) {
+//                      return 'Please enter a property Notes';
+//                    }
+//                  },
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                TextFormField(
+                  controller: _propertyLegalDescriptionController,
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'legal description',
+                      labelText: 'Legal Description'),
+//                  validator: (value) {
+//                    if (value.isEmpty) {
+//                      return 'Please enter a property Notes';
+//                    }
+//                  },
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                TextFormField(
+                  controller: _propertyDatePurchasedController,
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'date purchased',
+                      labelText: 'Date Purchased'),
+//                  validator: (value) {
+//                    if (value.isEmpty) {
+//                      return 'Please enter a property Notes';
+//                    }
+//                  },
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                TextFormField(
+                  controller: _propertyLandAreaController,
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'land area',
+                      labelText: 'Land Area'),
+//                  validator: (value) {
+//                    if (value.isEmpty) {
+//                      return 'Please enter a property Notes';
+//                    }
+//                  },
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                Row(
+                  children: <Widget>[
+                    RaisedButton(
+                      onPressed: () {
+                        if (_formKey.currentState.validate()) {
+                          if (_propertyNameController.text.isNotEmpty) {
+                            if (widget.documentID.isEmpty) {
+                              Firestore.instance
+                                  .collection('properties')
+                                  .add({
+                                    "propertyname":
+                                        _propertyNameController.text,
+                                    "propertyaddress":
+                                        _propertyAddressController.text,
+                                    "propertynotes":
+                                        _propertyNotesController.text,
+                                    "propertyzone":
+                                        _propertyZoneController.text,
+                                    "propertylegaldescription":
+                                        _propertyLegalDescriptionController
+                                            .text,
+                                    "propertydatepurchased":
+                                        _propertyDatePurchasedController.text,
+                                    "propertylandarea":
+                                        _propertyLandAreaController.text,
+                                    "createdDateTime": DateTime.now(),
+                                    "archived": 'n',
+                                    "uid": _uid,
+                                  })
+                                  .then((result) => {
+                                        Navigator.pop(context),
+                                        //toDo complete list below
+                                        _propertyNameController.clear(),
+                                        _propertyAddressController.clear(),
+                                      })
+                                  .catchError((err) => print(err));
+                            } else {
+                              Map<String, dynamic> data = {
+                                "propertyname": _propertyNameController.text,
+                                "propertyaddress":
+                                    _propertyAddressController.text,
+                                "propertynotes": _propertyNotesController.text,
+                                "propertyzone": _propertyZoneController.text,
+                                "propertylegaldescription":
+                                    _propertyLegalDescriptionController.text,
+                                "propertydatepurchased":
+                                    _propertyDatePurchasedController.text,
+                                "propertylandarea":
+                                    _propertyLandAreaController.text,
+                                "editedDatetime": DateTime.now(),
+                              };
+                              Firestore.instance
+                                  .collection('properties')
+                                  .document(widget.documentID)
+                                  .updateData(data)
+                                  .whenComplete(() {
+                                    print('Document Updated');
+                                  })
+                                  .then((result) => {
+                                        Navigator.pop(context),
+                                        //toDo complete list below
+                                        _propertyNameController.clear(),
+                                        _propertyAddressController.clear(),
+                                      })
+                                  .catchError((err) => print(err));
+                            }
+                          }
+                        }
+                      },
+                      child: Text('$buttonSaveUpdateText'),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    RaisedButton(
+                      disabledColor: Colors.grey[200],
+                      onPressed:
+                          _isArchiveButtonDisabled ? null : _archiveProperty,
+                      child: Text('Archive'),
+                    ),
+                    SizedBox(
+                      width: 40,
+                    ),
+                    RaisedButton(
+                      textColor: Colors.red,
+                      disabledColor: Colors.red[200],
+                      onPressed:
+                          _isDeleteButtonDisabled ? null : _deleteProperty,
+                      child: Text(
+                        'Delete',
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
-}
 
-//_sendToServer(){
-//  if (_key.currentState.validate() ){
-//    //No error in validator
-//    _key.currentState.save();
-//    Firestore.instance.runTransaction((Transaction transaction) async {
-//      CollectionReference reference = Firestore.instance.collection('books');
-//
-//      await reference.add({"Title": "$title", "Author": "$author"});
-//    });
-//  } else {
-//    // validation error
-//    setState(() {
-//      _validate = true;
-//    });
-//  }
-//
-//}
+  void _deleteProperty() {
+    Firestore.instance
+        .collection('propertiess')
+        .document(widget.documentID)
+        .delete()
+        .whenComplete(() {
+          print('Document deleted');
+        })
+        .then((result) => {
+              Navigator.pop(context),
+              //ToDo complete the list below
+              _propertyNameController.clear(),
+              _propertyAddressController.clear(),
+            })
+        .catchError((err) => print(err));
+  }
+
+  void _archiveProperty() {
+    Map<String, dynamic> data = {
+      "archived": 'y',
+    };
+    Firestore.instance
+        .collection('properties')
+        .document(widget.documentID)
+        .updateData(data)
+        .whenComplete(() {
+          print('Document Archived');
+        })
+        .then((result) => {
+              Navigator.pop(context),
+              //ToDo complete the list below
+              _propertyNameController.clear(),
+              _propertyAddressController.clear(),
+            })
+        .catchError((err) => print(err));
+  }
+}

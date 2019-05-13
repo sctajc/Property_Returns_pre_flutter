@@ -43,23 +43,26 @@ class _MyHomePageState extends State<MyHomePage> {
     authService.loading.listen((state) => setState(() => _loading = state));
     authService.user.toString();
 
-    print('_profile in build = $_profile');
+//    print('_profile in build = $_profile');
 
-    displayName = _profile == null
-        ? 'Not Signed In'
-        : '${_profile['displayName'].toString()}';
-    if (displayName.length < 1) displayName = 'Not Signed In';
+    displayName = (_profile != null && _profile.isNotEmpty)
+        ? '${_profile['displayName'].toString()}'
+        : 'Not logged in. You information ';
 
-    email = _profile['email'].toString();
-    uid = _profile['uid'].toString();
+    email = (_profile != null && _profile.isNotEmpty)
+        ? '${_profile['email'].toString()}'
+        : 'is only available within this app';
+
+    uid = (_profile != null && _profile.isNotEmpty)
+        ? '${_profile['uid'].toString()}'
+        : 'No uid';
+
+//    uid = _profile['uid'].toString();
 
     final drawerHeader = UserAccountsDrawerHeader(
       margin: EdgeInsets.only(bottom: 0, top: 0),
-      accountName: Text(displayName == null
-          ? 'You are not logged in and not required.'
-          : '$displayName'),
-      accountEmail: Text(
-          email == null ? 'Login to use your Google Contacts etc' : '$email'),
+      accountName: Text(displayName),
+      accountEmail: Text(email),
       currentAccountPicture: CircleAvatar(
         child: FlutterLogo(
           size: 32,
@@ -98,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
           color: Colors.blueAccent,
         ),
         ListTile(
-          title: Text('Your properties'),
+          title: Text('My properties'),
           onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
@@ -126,7 +129,9 @@ class _MyHomePageState extends State<MyHomePage> {
           color: Colors.blueAccent,
         ),
         ListTile(
-          title: Text(_profile['uid'] == null ? 'Log in' : 'Log out'),
+          title: Text((_profile['uid'] != null && _profile.isNotEmpty)
+              ? 'Log out'
+              : 'Log in'),
           onTap: () {
             if (_profile['uid'] == null) {
               // Log in

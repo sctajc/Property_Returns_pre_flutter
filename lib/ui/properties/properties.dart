@@ -18,14 +18,30 @@ class Properties extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  if (document['propertyid'] == 'rrr') Text('jjj'),
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  PropertyDetails(document['propertyid'])));
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PropertyDetails(
+                                document['propertyname'],
+                                document['propertyaddress'],
+                                document['propertynotes'],
+                                document['propertyzone'],
+                                document['propertyLegalDescription'],
+                                document['propertyDatePurchased'],
+                                document['propertyLandArea'],
+                                document['propertyInsurancePolicy'],
+                                document['propertyInsuranceAmount'],
+                                document['propertyInsuranceDate'],
+                                document['propertyInsuranceSource'],
+                                document['propertyMarketValuation'],
+                                document['propertyMarketValuationDate'],
+                                document['propertyMarketValuationSource'],
+                                document.documentID,
+                              ),
+                        ),
+                      );
                     },
                     child: Text(document['propertyname'],
                         style: TextStyle(
@@ -58,6 +74,27 @@ class Properties extends StatelessWidget {
                             .snapshots(),
                         builder: (context, snapshot) {
                           if (!snapshot.hasData) return const Text('Loading');
+                          if (snapshot.data.documents.length == 0)
+                            return Column(
+                              children: <Widget>[
+                                Text(
+                                  'No units have been assigned.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w300,
+                                    color: Colors.blueAccent[200],
+                                  ),
+                                ),
+                                Text(
+                                  'A unit is a defined area within a property available for renting.',
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w300,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            );
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Scrollbar(
@@ -134,9 +171,27 @@ class Properties extends StatelessWidget {
             ),
             onPressed: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => PropertyDetails('newproperty')));
+                context,
+                MaterialPageRoute(
+                  builder: (context) => PropertyDetails(
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                      ),
+                ),
+              );
             }),
       ],
     );

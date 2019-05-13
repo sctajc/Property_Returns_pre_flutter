@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:property_returns/ui/tasks/task_card.dart';
 import 'package:property_returns/ui/tasks/task_details.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:property_returns/ui/tasks/task_information.dart';
+import 'package:property_returns/util/my_icons_icons.dart';
 
 class Tasks extends StatefulWidget {
   @override
@@ -14,6 +16,18 @@ class _TasksState extends State<Tasks> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Tasks'),
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(MyIcons.assessment),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => TaskInformation(),
+                  ),
+                );
+              })
+        ],
       ),
       body: Center(
         child: Container(
