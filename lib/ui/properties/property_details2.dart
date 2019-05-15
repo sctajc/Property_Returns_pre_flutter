@@ -1,4 +1,6 @@
-// the old property_details before basing on task_details
+// todo remove this file
+//  the old property_details before basing on task_details
+// first check if any ideas re ui required
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

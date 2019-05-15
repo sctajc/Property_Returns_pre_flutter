@@ -1,12 +1,16 @@
-// property_details bases on task_details
+// todo
+// decide what fields are needed and implement with correct field type
+// Improve layout/ui
+// see if can put update/create etc buttons as fixed display at bottom of screen
+// Check any validation required
+// rewrite better where code duplication eg controller.clear() and
+// FireStore add/update fields eg use properties_db???
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:property_returns/UI/properties/property_db.dart';
 import 'package:property_returns/util/my_icons_icons.dart';
-import 'package:property_returns/UI/properties/properties.dart';
 import 'package:property_returns/ui/properties/property_information.dart';
-import 'package:property_returns/util/my_icons_icons.dart';
 import 'package:property_returns/util/auth.dart';
 
 class PropertyDetails extends StatefulWidget {
@@ -182,11 +186,6 @@ class _PropertyDetailsState extends State<PropertyDetails> {
                       border: InputBorder.none,
                       hintText: 'The property street address',
                       labelText: 'Property Address'),
-//                  validator: (value) {
-//                    if (value.isEmpty) {
-//                      return 'Please enter a property Address';
-//                    }
-//                  },
                 ),
                 SizedBox(
                   height: 5,
@@ -197,11 +196,6 @@ class _PropertyDetailsState extends State<PropertyDetails> {
                       border: InputBorder.none,
                       hintText: 'property notes',
                       labelText: 'Property Notes'),
-//                  validator: (value) {
-//                    if (value.isEmpty) {
-//                      return 'Please enter a property Notes';
-//                    }
-//                  },
                 ),
                 SizedBox(
                   height: 5,
@@ -212,11 +206,6 @@ class _PropertyDetailsState extends State<PropertyDetails> {
                       border: InputBorder.none,
                       hintText: 'property zone',
                       labelText: 'Property Zone'),
-//                  validator: (value) {
-//                    if (value.isEmpty) {
-//                      return 'Please enter a property Notes';
-//                    }
-//                  },
                 ),
                 SizedBox(
                   height: 5,
@@ -227,11 +216,6 @@ class _PropertyDetailsState extends State<PropertyDetails> {
                       border: InputBorder.none,
                       hintText: 'legal description',
                       labelText: 'Legal Description'),
-//                  validator: (value) {
-//                    if (value.isEmpty) {
-//                      return 'Please enter a property Notes';
-//                    }
-//                  },
                 ),
                 SizedBox(
                   height: 5,
@@ -242,11 +226,6 @@ class _PropertyDetailsState extends State<PropertyDetails> {
                       border: InputBorder.none,
                       hintText: 'date purchased',
                       labelText: 'Date Purchased'),
-//                  validator: (value) {
-//                    if (value.isEmpty) {
-//                      return 'Please enter a property Notes';
-//                    }
-//                  },
                 ),
                 SizedBox(
                   height: 5,
@@ -257,11 +236,76 @@ class _PropertyDetailsState extends State<PropertyDetails> {
                       border: InputBorder.none,
                       hintText: 'land area',
                       labelText: 'Land Area'),
-//                  validator: (value) {
-//                    if (value.isEmpty) {
-//                      return 'Please enter a property Notes';
-//                    }
-//                  },
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                TextFormField(
+                  controller: _propertyInsurancePolicyController,
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'insurance policy',
+                      labelText: 'Insurance Policy'),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                TextFormField(
+                  controller: _propertyInsuranceAmountController,
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'insurance ammount',
+                      labelText: 'Insurance Amount'),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                TextFormField(
+                  controller: _propertyInsuranceDateController,
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'insurance date',
+                      labelText: 'Insurance Date'),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                TextFormField(
+                  controller: _propertyInsuranceSourceController,
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'insurance source',
+                      labelText: 'Insurance Source'),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                TextFormField(
+                  controller: _propertyMarketValuationController,
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'market valuation',
+                      labelText: 'Market Valuation'),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                TextFormField(
+                  controller: _propertyMarketValuationDateController,
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'market valuation date',
+                      labelText: 'Market Valuation Date'),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                TextFormField(
+                  controller: _propertyMarketValuationSourceController,
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'market valuation source',
+                      labelText: 'Market Valuation Source'),
                 ),
                 SizedBox(
                   height: 5,
@@ -276,45 +320,96 @@ class _PropertyDetailsState extends State<PropertyDetails> {
                               Firestore.instance
                                   .collection('properties')
                                   .add({
-                                    "propertyname":
+                                    "propertyName":
                                         _propertyNameController.text,
-                                    "propertyaddress":
+                                    "propertyAddress":
                                         _propertyAddressController.text,
-                                    "propertynotes":
+                                    "propertyNotes":
                                         _propertyNotesController.text,
-                                    "propertyzone":
+                                    "propertyZone":
                                         _propertyZoneController.text,
-                                    "propertylegaldescription":
+                                    "propertyLegalDescription":
                                         _propertyLegalDescriptionController
                                             .text,
-                                    "propertydatepurchased":
+                                    "propertyDatePurchased":
                                         _propertyDatePurchasedController.text,
-                                    "propertylandarea":
+                                    "propertyLandArea":
                                         _propertyLandAreaController.text,
+                                    "propertyInsurancePolicy":
+                                        _propertyInsurancePolicyController.text,
+                                    "propertyInsuranceAmount":
+                                        _propertyInsuranceAmountController.text,
+                                    "propertyInsuranceDate":
+                                        _propertyInsuranceDateController.text,
+                                    "propertyInsuranceSource":
+                                        _propertyInsuranceSourceController.text,
+                                    "propertyMarketValuation":
+                                        _propertyMarketValuationController.text,
+                                    "propertyMarketValuationDate":
+                                        _propertyMarketValuationDateController
+                                            .text,
+                                    "propertyMarketValuationSource":
+                                        _propertyMarketValuationSourceController
+                                            .text,
                                     "createdDateTime": DateTime.now(),
                                     "archived": 'n',
                                     "uid": _uid,
                                   })
                                   .then((result) => {
                                         Navigator.pop(context),
-                                        //toDo complete list below
                                         _propertyNameController.clear(),
                                         _propertyAddressController.clear(),
+                                        _propertyNotesController.clear(),
+                                        _propertyZoneController.clear(),
+                                        _propertyLegalDescriptionController
+                                            .clear(),
+                                        _propertyDatePurchasedController
+                                            .clear(),
+                                        _propertyLandAreaController.clear(),
+                                        _propertyInsurancePolicyController
+                                            .clear(),
+                                        _propertyInsuranceAmountController
+                                            .clear(),
+                                        _propertyInsuranceDateController
+                                            .clear(),
+                                        _propertyInsuranceSourceController
+                                            .clear(),
+                                        _propertyMarketValuationController
+                                            .clear(),
+                                        _propertyMarketValuationDateController
+                                            .clear(),
+                                        _propertyMarketValuationSourceController
+                                            .clear(),
                                       })
                                   .catchError((err) => print(err));
                             } else {
                               Map<String, dynamic> data = {
-                                "propertyname": _propertyNameController.text,
-                                "propertyaddress":
+                                "propertyName": _propertyNameController.text,
+                                "propertyAddress":
                                     _propertyAddressController.text,
-                                "propertynotes": _propertyNotesController.text,
-                                "propertyzone": _propertyZoneController.text,
-                                "propertylegaldescription":
+                                "propertyNotes": _propertyNotesController.text,
+                                "propertyZone": _propertyZoneController.text,
+                                "propertyLegalDescription":
                                     _propertyLegalDescriptionController.text,
-                                "propertydatepurchased":
+                                "propertyDatePurchased":
                                     _propertyDatePurchasedController.text,
-                                "propertylandarea":
+                                "propertyLandArea":
                                     _propertyLandAreaController.text,
+                                "propertyInsurancePolicy":
+                                    _propertyInsurancePolicyController.text,
+                                "propertyInsuranceAmount":
+                                    _propertyInsuranceAmountController.text,
+                                "propertyInsuranceDate":
+                                    _propertyInsuranceDateController.text,
+                                "propertyInsuranceSource":
+                                    _propertyInsuranceSourceController.text,
+                                "propertyMarketValuation":
+                                    _propertyMarketValuationController.text,
+                                "propertyMarketValuationDate":
+                                    _propertyMarketValuationDateController.text,
+                                "propertyMarketValuationSource":
+                                    _propertyMarketValuationSourceController
+                                        .text,
                                 "editedDatetime": DateTime.now(),
                               };
                               Firestore.instance
@@ -326,9 +421,29 @@ class _PropertyDetailsState extends State<PropertyDetails> {
                                   })
                                   .then((result) => {
                                         Navigator.pop(context),
-                                        //toDo complete list below
                                         _propertyNameController.clear(),
                                         _propertyAddressController.clear(),
+                                        _propertyNotesController.clear(),
+                                        _propertyZoneController.clear(),
+                                        _propertyLegalDescriptionController
+                                            .clear(),
+                                        _propertyDatePurchasedController
+                                            .clear(),
+                                        _propertyLandAreaController.clear(),
+                                        _propertyInsurancePolicyController
+                                            .clear(),
+                                        _propertyInsuranceAmountController
+                                            .clear(),
+                                        _propertyInsuranceDateController
+                                            .clear(),
+                                        _propertyInsuranceSourceController
+                                            .clear(),
+                                        _propertyMarketValuationController
+                                            .clear(),
+                                        _propertyMarketValuationDateController
+                                            .clear(),
+                                        _propertyMarketValuationSourceController
+                                            .clear(),
                                       })
                                   .catchError((err) => print(err));
                             }
@@ -370,7 +485,7 @@ class _PropertyDetailsState extends State<PropertyDetails> {
 
   void _deleteProperty() {
     Firestore.instance
-        .collection('propertiess')
+        .collection('properties')
         .document(widget.documentID)
         .delete()
         .whenComplete(() {
@@ -378,9 +493,20 @@ class _PropertyDetailsState extends State<PropertyDetails> {
         })
         .then((result) => {
               Navigator.pop(context),
-              //ToDo complete the list below
               _propertyNameController.clear(),
               _propertyAddressController.clear(),
+              _propertyNotesController.clear(),
+              _propertyZoneController.clear(),
+              _propertyLegalDescriptionController.clear(),
+              _propertyDatePurchasedController.clear(),
+              _propertyLandAreaController.clear(),
+              _propertyInsurancePolicyController.clear(),
+              _propertyInsuranceAmountController.clear(),
+              _propertyInsuranceDateController.clear(),
+              _propertyInsuranceSourceController.clear(),
+              _propertyMarketValuationController.clear(),
+              _propertyMarketValuationDateController.clear(),
+              _propertyMarketValuationSourceController.clear(),
             })
         .catchError((err) => print(err));
   }
@@ -398,9 +524,20 @@ class _PropertyDetailsState extends State<PropertyDetails> {
         })
         .then((result) => {
               Navigator.pop(context),
-              //ToDo complete the list below
               _propertyNameController.clear(),
               _propertyAddressController.clear(),
+              _propertyNotesController.clear(),
+              _propertyZoneController.clear(),
+              _propertyLegalDescriptionController.clear(),
+              _propertyDatePurchasedController.clear(),
+              _propertyLandAreaController.clear(),
+              _propertyInsurancePolicyController.clear(),
+              _propertyInsuranceAmountController.clear(),
+              _propertyInsuranceDateController.clear(),
+              _propertyInsuranceSourceController.clear(),
+              _propertyMarketValuationController.clear(),
+              _propertyMarketValuationDateController.clear(),
+              _propertyMarketValuationSourceController.clear(),
             })
         .catchError((err) => print(err));
   }

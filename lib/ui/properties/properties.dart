@@ -6,7 +6,13 @@ import 'package:property_returns/ui/properties/property_information.dart';
 import 'package:property_returns/util/my_icons_icons.dart';
 
 class Properties extends StatelessWidget {
+  String propertyID;
+  String propertyName;
+
   Widget _property(BuildContext context, DocumentSnapshot document) {
+    propertyID = document.documentID;
+    propertyName = document['propertyName'];
+
     return Scrollbar(
       child: ListTile(
         title: Padding(
@@ -24,10 +30,10 @@ class Properties extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) => PropertyDetails(
-                                document['propertyname'],
-                                document['propertyaddress'],
-                                document['propertynotes'],
-                                document['propertyzone'],
+                                document['propertyName'],
+                                document['propertyAddress'],
+                                document['propertyNotes'],
+                                document['propertyZone'],
                                 document['propertyLegalDescription'],
                                 document['propertyDatePurchased'],
                                 document['propertyLandArea'],
@@ -43,7 +49,7 @@ class Properties extends StatelessWidget {
                         ),
                       );
                     },
-                    child: Text(document['propertyname'],
+                    child: Text(document['propertyName'],
                         style: TextStyle(
                             color: Colors.blue,
                             fontStyle: FontStyle.italic,
@@ -51,8 +57,26 @@ class Properties extends StatelessWidget {
                                 .w500) //Theme.of(context).textTheme.title,
                         ),
                   ),
+
+                  // to add a new unit
                   RaisedButton(
-                    onPressed: null,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UnitDetails(
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                propertyID,
+                                propertyName,
+                              ),
+                        ),
+                      );
+                    },
                     child: Text('Add a Unit'),
                   )
                 ],
@@ -69,8 +93,8 @@ class Properties extends StatelessWidget {
                     child: StreamBuilder(
                         stream: Firestore.instance
                             .collection('units')
-                            .where('propertyid',
-                                isEqualTo: document['propertyid'])
+                            .where('propertyID', isEqualTo: propertyID)
+                            .where('unitArchived', isEqualTo: 'n')
                             .snapshots(),
                         builder: (context, snapshot) {
                           if (!snapshot.hasData) return const Text('Loading');
@@ -85,26 +109,25 @@ class Properties extends StatelessWidget {
                                     color: Colors.blueAccent[200],
                                   ),
                                 ),
-                                Text(
-                                  'A unit is a defined area within a property available for renting.',
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w300,
-                                    color: Colors.black,
-                                  ),
-                                ),
+//                                Text(
+//                                  'A unit is a defined area within a property available for renting.',
+//                                  textAlign: TextAlign.left,
+//                                  style: TextStyle(
+//                                    fontWeight: FontWeight.w300,
+//                                    color: Colors.black,
+//                                  ),
+//                                ),
                               ],
                             );
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Scrollbar(
                               child: ListView.builder(
-                                shrinkWrap: true,
-                                itemExtent: 20,
-                                itemCount: snapshot.data.documents.length,
-                                itemBuilder: (context, index) => _units(
-                                    context, snapshot.data.documents[index]),
-                              ),
+                                  shrinkWrap: true,
+                                  itemExtent: 20,
+                                  itemCount: snapshot.data.documents.length,
+                                  itemBuilder: (context, index) => _units(
+                                      context, snapshot.data.documents[index])),
                             ),
                           );
                         })),
@@ -116,16 +139,28 @@ class Properties extends StatelessWidget {
     );
   }
 
+  // to edit an existing unit
   Widget _units(BuildContext context, DocumentSnapshot document) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => UnitDetails(document['unitid'])));
+          context,
+          MaterialPageRoute(
+            builder: (context) => UnitDetails(
+                  document['unitName'],
+                  document['unitArea'],
+                  document['unitNotes'],
+                  document['unitResidential'],
+                  document['unitLeaseDescription'],
+                  document.documentID, // unit's UID
+                  propertyID,
+                  propertyName,
+                ),
+          ),
+        );
       },
       child: Text(
-        document['unitname'],
+        document['unitName'],
         maxLines: 1,
         style: TextStyle(fontSize: 15),
       ),
@@ -151,7 +186,7 @@ class Properties extends StatelessWidget {
       body: StreamBuilder(
           stream: Firestore.instance
               .collection('properties')
-              .orderBy('propertyname')
+              .orderBy('propertyName')
               .snapshots(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) return const Text('Loading');
@@ -162,11 +197,12 @@ class Properties extends StatelessWidget {
                   _property(context, snapshot.data.documents[index]),
             );
           }),
-      // add floating button
+
+      // to add a new property
       persistentFooterButtons: <Widget>[
         RaisedButton(
             child: Text(
-              'Add a Property',
+              'Add a new Property',
               style: TextStyle(color: Colors.black),
             ),
             onPressed: () {
