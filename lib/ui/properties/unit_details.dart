@@ -1,4 +1,6 @@
 // todo
+// learn how to access Firestore to get a single value ie properyName
+// this would save passing properyName from properties.dart
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,6 +10,7 @@ import 'package:property_returns/UI/properties/properties.dart';
 import 'package:property_returns/ui/properties/property_information.dart';
 import 'package:property_returns/util/my_icons_icons.dart';
 import 'package:property_returns/util/auth.dart';
+import 'dart:async';
 
 class UnitDetails extends StatefulWidget {
   final String unitName;
@@ -49,6 +52,8 @@ class _UnitDetailsState extends State<UnitDetails> {
   bool _isDeleteButtonDisabled;
   bool _isArchiveButtonDisabled;
 
+  String displayPropertyName;
+
   @override
   void initState() {
     super.initState();
@@ -60,6 +65,27 @@ class _UnitDetailsState extends State<UnitDetails> {
 
     _isDeleteButtonDisabled = widget.unitID.isEmpty ? true : false;
     _isArchiveButtonDisabled = widget.unitID.isEmpty ? true : false;
+
+    displayPropertyName = widget.propertyName;
+    loadPropertyName();
+  }
+
+  // get propertyName from database
+  loadPropertyName() async {
+    var propertyName = await getPropertyNameFromPropertyID(
+        widget.propertyID); // to get propertyName from Firestore
+    setState(() {
+      displayPropertyName = propertyName;
+    });
+  }
+
+  Future getPropertyNameFromPropertyID(propertyID) async {
+    DocumentSnapshot snapshot = await Firestore.instance
+        .collection('properties')
+        .document(propertyID)
+        .get();
+    String result = snapshot['propertyName'].toString();
+    return result;
   }
 
   @override
@@ -107,13 +133,15 @@ class _UnitDetailsState extends State<UnitDetails> {
             child: ListView(
               children: <Widget>[
                 Text(
-                  '${widget.propertyName}',
+                  '$displayPropertyName',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                   textAlign: TextAlign.center,
                 ),
+                Text('unitID = ${widget.unitID}'),
+                Text('propertID = ${widget.propertyID}'),
                 TextFormField(
                   controller: _unitNameController,
                   autofocus: widget.unitID.isEmpty ? true : false,
